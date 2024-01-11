@@ -5,7 +5,7 @@ const taskSection = document.getElementById('task-section');
 myForm.addEventListener('submit', (e) => {
 	e.preventDefault();
 	if (input.value != '') {
-		createTask(input.value);
+		createTask(input.value, true);
 		input.value = '';
 		input.focus();
 	}
@@ -13,10 +13,9 @@ myForm.addEventListener('submit', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
 	if (localStorage.length) {
-		const localKeys = Object.keys(localStorage);
-		console.log(localKeys);
+		const localKeys = Object.keys(localStorage).sort();
 		localKeys.forEach((task) => {
-			createTask(localStorage.getItem(task));
+			createTask(localStorage.getItem(task), false);
 		});
 	}
 });
@@ -30,6 +29,7 @@ taskSection.addEventListener('click', (e) => {
 
 		li.classList.add('bg-light');
 		li.querySelector('span').classList.add('text-decoration-line-through');
+
 		buttons.removeChild(e.target);
 	} else if (e.target.classList.contains('delete')) {
 		localStorage.removeItem(`task${li.dataset.taskNumber}`);
@@ -39,7 +39,7 @@ taskSection.addEventListener('click', (e) => {
 	}
 });
 
-function createTask(data) {
+function createTask(data, newtask) {
 	const li = document.createElement('li');
 	li.classList.add('task');
 
@@ -62,8 +62,11 @@ function createTask(data) {
 
 	li.append(span, buttons);
 
-	const taskNumber = taskSection.childElementCount + 1;
-	localStorage.setItem(`task${taskNumber}`, data);
+	const taskNumber = taskSection.childElementCount;
+
+	if (newtask) {
+		localStorage.setItem(`task${taskNumber}`, data);
+	}
 
 	li.dataset.taskNumber = taskNumber;
 
